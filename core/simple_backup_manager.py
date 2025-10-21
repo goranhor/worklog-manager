@@ -9,6 +9,7 @@ import os
 import shutil
 import sqlite3
 import json
+from utils.datetime_compat import datetime_fromisoformat
 import threading
 import time
 from datetime import datetime, timedelta
@@ -233,7 +234,7 @@ class BackupManager:
                         info_created = info_data.get('created')
                         if info_created:
                             try:
-                                entry['created'] = datetime.fromisoformat(info_created)
+                                entry['created'] = datetime_fromisoformat(info_created)
                             except ValueError:
                                 pass
                     except Exception as info_error:

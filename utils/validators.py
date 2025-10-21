@@ -6,6 +6,7 @@ from typing import Optional, List, Tuple
 
 from data.models import WorklogState, ActionType, BreakType, WorkSession
 from core.action_history import ActionHistory, ActionSnapshot
+from utils.datetime_compat import datetime_fromisoformat
 
 
 class WorklogValidator:
@@ -56,22 +57,22 @@ class WorklogValidator:
         
         # Validate date format
         try:
-            datetime.fromisoformat(session.date)
+            datetime_fromisoformat(session.date)
         except ValueError:
             return False, f"Invalid date format: {session.date}"
         
         # Validate times if present
         if session.start_time:
             try:
-                datetime.fromisoformat(session.start_time)
+                datetime_fromisoformat(session.start_time)
             except ValueError:
                 return False, f"Invalid start time format: {session.start_time}"
         
         if session.end_time:
             try:
-                end_time = datetime.fromisoformat(session.end_time)
+                end_time = datetime_fromisoformat(session.end_time)
                 if session.start_time:
-                    start_time = datetime.fromisoformat(session.start_time)
+                    start_time = datetime_fromisoformat(session.start_time)
                     if end_time < start_time:
                         return False, "End time cannot be before start time"
             except ValueError:
@@ -195,8 +196,8 @@ class WorklogValidator:
             Tuple of (is_valid, error_message)
         """
         try:
-            start = datetime.fromisoformat(start_date)
-            end = datetime.fromisoformat(end_date)
+            start = datetime_fromisoformat(start_date)
+            end = datetime_fromisoformat(end_date)
         except ValueError as e:
             return False, f"Invalid date format: {e}"
         
@@ -259,7 +260,7 @@ class InputValidator:
             return False, "Time string is empty"
         
         try:
-            datetime.fromisoformat(time_str)
+            datetime_fromisoformat(time_str)
             return True, ""
         except ValueError:
             return False, f"Invalid time format: {time_str}"

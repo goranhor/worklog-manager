@@ -68,7 +68,7 @@ class BreakTracker(ttk.Frame):
         lunch_frame.grid(row=1, column=0, columnspan=3, sticky="ew", pady=1)
         lunch_frame.columnconfigure(2, weight=1)
         
-        tk.Label(lunch_frame, text="🍽️ Lunch", bg="#FFE4B5").grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(lunch_frame, text="[L] Lunch", bg="#FFE4B5").grid(row=0, column=0, sticky="w", padx=5, pady=2)
         tk.Label(lunch_frame, textvariable=self.lunch_count_var, bg="#FFE4B5").grid(row=0, column=1, padx=20, pady=2)
         tk.Label(lunch_frame, textvariable=self.lunch_time_var, bg="#FFE4B5").grid(row=0, column=2, sticky="e", padx=5, pady=2)
         
@@ -77,7 +77,7 @@ class BreakTracker(ttk.Frame):
         coffee_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=1)
         coffee_frame.columnconfigure(2, weight=1)
         
-        tk.Label(coffee_frame, text="☕ Coffee", bg="#D2B48C").grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(coffee_frame, text="[C] Coffee", bg="#D2B48C").grid(row=0, column=0, sticky="w", padx=5, pady=2)
         tk.Label(coffee_frame, textvariable=self.coffee_count_var, bg="#D2B48C").grid(row=0, column=1, padx=20, pady=2)
         tk.Label(coffee_frame, textvariable=self.coffee_time_var, bg="#D2B48C").grid(row=0, column=2, sticky="e", padx=5, pady=2)
         
@@ -86,7 +86,7 @@ class BreakTracker(ttk.Frame):
         general_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=1)
         general_frame.columnconfigure(2, weight=1)
         
-        tk.Label(general_frame, text="⏱️ General", bg="#F0F0F0").grid(row=0, column=0, sticky="w", padx=5, pady=2)
+        tk.Label(general_frame, text="[B] General", bg="#F0F0F0").grid(row=0, column=0, sticky="w", padx=5, pady=2)
         tk.Label(general_frame, textvariable=self.general_count_var, bg="#F0F0F0").grid(row=0, column=1, padx=20, pady=2)
         tk.Label(general_frame, textvariable=self.general_time_var, bg="#F0F0F0").grid(row=0, column=2, sticky="e", padx=5, pady=2)
         
@@ -166,14 +166,14 @@ class BreakTracker(ttk.Frame):
             else:
                 status = f"{start_time}-ongoing"
             
-            # Add emoji based on break type
-            emoji = {
-                BreakType.LUNCH: "🍽️",
-                BreakType.COFFEE: "☕",
-                BreakType.GENERAL: "⏱️"
-            }.get(break_period.break_type, "⏱️")
+            # Add text symbol based on break type
+            symbol = {
+                BreakType.LUNCH: "[L]",
+                BreakType.COFFEE: "[C]",
+                BreakType.GENERAL: "[B]"
+            }.get(break_period.break_type, "[B]")
             
-            break_text = f"{emoji} {break_period.break_type.value.title()}: {status}"
+            break_text = f"{symbol} {break_period.break_type.value.title()}: {status}"
             self.breaks_listbox.insert(tk.END, break_text)
     
     def _break_duration_seconds(self, break_period: BreakPeriod) -> int:

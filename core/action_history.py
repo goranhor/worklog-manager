@@ -7,6 +7,7 @@ from typing import List, Optional, Dict, Any
 from dataclasses import dataclass, asdict
 
 from data.models import WorklogState, ActionType, BreakType
+from utils.datetime_compat import datetime_fromisoformat
 
 
 @dataclass
@@ -278,9 +279,9 @@ class ActionHistory:
                 data['state_after'] = WorklogState(data['state_after'])
                 
                 # Convert timestamp strings back to datetime
-                data['timestamp'] = datetime.fromisoformat(data['timestamp'])
+                data['timestamp'] = datetime_fromisoformat(data['timestamp'])
                 if data.get('revoke_timestamp'):
-                    data['revoke_timestamp'] = datetime.fromisoformat(data['revoke_timestamp'])
+                    data['revoke_timestamp'] = datetime_fromisoformat(data['revoke_timestamp'])
                 
                 action = ActionSnapshot(**data)
                 imported_actions.append(action)

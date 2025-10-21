@@ -15,6 +15,33 @@ from core.settings import SettingsManager, UserSettings
 from gui.theme_manager import ThemeManager, ThemePreview
 from core.simple_backup_manager import BackupManager
 
+# Compatibility wrapper for ttk.Spinbox (not available in Python 3.6)
+if not hasattr(ttk, 'Spinbox'):
+    class TtkSpinboxCompat(tk.Spinbox):
+        """Compatibility wrapper for ttk.Spinbox using tk.Spinbox"""
+        def __init__(self, parent, **kwargs):
+            # Convert ttk-style options to tk.Spinbox options
+            tk_kwargs = kwargs.copy()
+            
+            # Handle common ttk.Spinbox parameters
+            if 'from_' in tk_kwargs:
+                tk_kwargs['from'] = tk_kwargs.pop('from_')
+            if 'to' in tk_kwargs:
+                tk_kwargs['to'] = tk_kwargs['to']
+            if 'increment' in tk_kwargs:
+                tk_kwargs['increment'] = tk_kwargs['increment']
+            if 'textvariable' in tk_kwargs:
+                tk_kwargs['textvariable'] = tk_kwargs['textvariable']
+                
+            # Set some reasonable defaults for appearance
+            tk_kwargs.setdefault('width', 10)
+            tk_kwargs.setdefault('justify', 'center')
+            
+            super().__init__(parent, **tk_kwargs)
+    
+    # Monkey patch ttk to include our compatibility Spinbox
+    ttk.Spinbox = TtkSpinboxCompat
+
 class SettingsDialog:
     """Main settings dialog with tabbed interface for all configuration options."""
     
