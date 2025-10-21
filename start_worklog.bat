@@ -1,6 +1,6 @@
 @echo off
 REM Worklog Manager - Windows Startup Script
-REM Version 1.5.0
+REM Version 1.6.0
 REM 
 REM This batch file provides an easy way to start Worklog Manager on Windows
 

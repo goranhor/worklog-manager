@@ -11,7 +11,7 @@ Usage:
     double-click this file if Python is properly configured
 
 Author: GitHub Copilot
-Version: 1.5.0
+Version: 1.6.0
 """
 
 import sys
@@ -117,7 +117,7 @@ def start_application():
 
 def main():
     """Main startup function."""
-    print("Worklog Manager - Startup Script v1.5.0")
+    print("Worklog Manager - Startup Script v1.6.0")
     print("=" * 50)
     
     # Check system requirements

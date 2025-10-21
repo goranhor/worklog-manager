@@ -26,7 +26,7 @@ Advanced Features (Phase 4):
 - Cross-platform compatibility
 
 Author: GitHub Copilot
-Version: 1.5.0
+Version: 1.6.0
 """
 
 import sys
@@ -204,7 +204,7 @@ class WorklogApplication:
             main_window = self.create_main_window()
             
             # Start the application
-            self.logger.info("Starting Worklog Manager Application v1.5.0")
+            self.logger.info("Starting Worklog Manager Application v1.6.0")
             main_window.run()
             
         except Exception as e:
@@ -266,7 +266,7 @@ def setup_logging():
     logger = logging.getLogger(__name__)
     logger.info("="*50)
     logger.info("Worklog Manager Application Starting")
-    logger.info(f"Version: 1.5.0")
+    logger.info(f"Version: 1.6.0")
     logger.info(f"Python: {sys.version}")
     logger.info(f"Working Directory: {os.getcwd()}")
     logger.info(f"Project Root: {project_root}")
@@ -281,7 +281,7 @@ def main():
         setup_logging()
         logger = logging.getLogger(__name__)
         
-        logger.info("Initializing Worklog Manager v1.5.0 with advanced features...")
+        logger.info("Initializing Worklog Manager v1.6.0 with advanced features...")
         
         # Create and run the comprehensive application
         app = WorklogApplication()

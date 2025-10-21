@@ -2,7 +2,7 @@
 
 Future development plans and feature ideas for Worklog Manager.
 
-## Version 1.5.0 - CURRENT ✅
+## Version 1.6.0 - CURRENT ✅
 
 Latest highlights:
 - ✅ Appearance settings for window size and maximized state

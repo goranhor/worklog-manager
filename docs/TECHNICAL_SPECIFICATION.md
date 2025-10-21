@@ -26,7 +26,7 @@
 
 #### Window Properties
 - **Size**: 700x500 pixels (resizable)
-- **Title**: "Worklog Manager v1.5.0"
+- **Title**: "Worklog Manager v1.6.0"
 - **Icon**: Custom work timer icon
 - **Position**: Center screen on startup
 

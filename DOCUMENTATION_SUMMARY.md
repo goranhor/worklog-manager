@@ -89,7 +89,7 @@ Configure these in GitHub:
 1. **Description**: Add a clear one-line description
 2. **Topics**: Add tags like `time-tracking`, `python`, `tkinter`, `productivity`
 3. **Website**: Link to documentation or project page
-4. **Releases**: Create your first release (v1.5.0)
+4. **Releases**: Create your first release (v1.6.0)
 5. **About**: Fill in the About section with description and topics
 6. **Discussions**: Enable GitHub Discussions for community
 7. **Issues**: Ensure issues are enabled
@@ -97,7 +97,7 @@ Configure these in GitHub:
 
 ### Before Publishing
 - [ ] Replace `your-username` in all markdown files with actual GitHub username
-- [ ] Create first release (v1.5.0) on GitHub
+- [ ] Create first release (v1.6.0) on GitHub
 - [ ] Add repository description and topics
 - [ ] Enable GitHub Discussions
 - [ ] Consider adding a social preview image

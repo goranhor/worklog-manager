@@ -37,7 +37,7 @@ class MainWindow:
 
         # Create main window
         self.root = tk.Tk()
-        self.root.title("Worklog Manager v1.5.0")
+        self.root.title("Worklog Manager v1.6.0")
         
         # Load window settings from configuration
         appearance_settings = self.settings_manager.settings.appearance
@@ -126,9 +126,44 @@ class MainWindow:
     
     def _create_widgets(self):
         """Create and layout all GUI widgets."""
-        # Main container
-        self.main_frame = ttk.Frame(self.root, padding="10", style="Themed.TFrame")
-        self.main_frame.pack(fill="both", expand=True)
+        # Scrollable container to accommodate smaller window sizes
+        self.content_container = ttk.Frame(self.root, style="Themed.TFrame")
+        self.content_container.pack(fill="both", expand=True)
+
+        canvas_bg = self.root.cget("bg") if self.root else None
+
+        self.scroll_canvas = tk.Canvas(
+            self.content_container,
+            highlightthickness=0,
+            borderwidth=0,
+            background=canvas_bg
+        )
+        self.scroll_canvas.pack(side="left", fill="both", expand=True)
+
+        self.vertical_scrollbar = ttk.Scrollbar(
+            self.content_container,
+            orient="vertical",
+            command=self.scroll_canvas.yview
+        )
+        self.vertical_scrollbar.pack(side="right", fill="y")
+
+        self._scrollbar_visible = True
+
+        self.scroll_canvas.configure(yscrollcommand=self.vertical_scrollbar.set)
+
+        # Main content frame hosted inside the canvas
+        self.main_frame = ttk.Frame(self.scroll_canvas, padding="10", style="Themed.TFrame")
+        self._canvas_window_id = self.scroll_canvas.create_window(
+            (0, 0), window=self.main_frame, anchor="nw"
+        )
+
+        # Ensure scrollbar updates whenever content changes size
+        self.main_frame.bind("<Configure>", self._on_canvas_frame_configure)
+        self.scroll_canvas.bind("<Configure>", self._on_canvas_configure)
+
+        # Support mouse wheel scrolling
+        self._bind_mousewheel(self.scroll_canvas)
+        self._bind_mousewheel(self.main_frame)
         
         # Header section
         self._create_header(self.main_frame)
@@ -149,12 +184,6 @@ class MainWindow:
         
         # Action buttons section
         self._create_action_buttons(self.main_frame)
-        
-        # Store frame references for theme registration
-        self.header_frame = None
-        self.button_frame = None
-        self.break_frame = None
-        self.action_frame = None
     
     def _register_widgets_with_theme_manager(self):
         """Register all main window widgets with the theme manager for theme updates."""
@@ -163,6 +192,9 @@ class MainWindow:
             
         try:
             # Register tkinter widgets that need theme updates
+            if hasattr(self, 'scroll_canvas'):
+                self.theme_manager.register_widget(self.scroll_canvas, 'primary_bg')
+
             if hasattr(self, 'date_label'):
                 self.theme_manager.register_widget(self.date_label, 'primary_bg')
             
@@ -216,15 +248,21 @@ class MainWindow:
         # First row - Start Day and End Day
         row1_frame = ttk.Frame(button_frame, style="Themed.TFrame")
         row1_frame.pack(fill="x", pady=(0, 10))
-        
-        self.start_day_btn = ttk.Button(row1_frame, text="Start Day", 
-                                       command=self._start_day,
-                                       style="Themed.TButton")
+
+        self.start_day_btn = ttk.Button(
+            row1_frame,
+            text="Start Day",
+            command=self._start_day,
+            style="StartDay.TButton"
+        )
         self.start_day_btn.pack(side="left", padx=(0, 10), ipadx=20, ipady=10)
-        
-        self.end_day_btn = ttk.Button(row1_frame, text="End Day",
-                                     command=self._end_day,
-                                     style="Themed.TButton")
+
+        self.end_day_btn = ttk.Button(
+            row1_frame,
+            text="End Day",
+            command=self._end_day,
+            style="EndDay.TButton"
+        )
         self.end_day_btn.pack(side="right", padx=(10, 0), ipadx=20, ipady=10)
         
         # Second row - Stop and Continue
@@ -233,12 +271,12 @@ class MainWindow:
         
         self.stop_btn = ttk.Button(row2_frame, text="Stop",
                                   command=self._stop_work,
-                                  style="Themed.TButton")
+                                  style="Stop.TButton")
         self.stop_btn.pack(side="left", padx=(0, 10), ipadx=20, ipady=10)
         
         self.continue_btn = ttk.Button(row2_frame, text="Continue",
                                       command=self._continue_work,
-                                      style="Themed.TButton")
+                                      style="Continue.TButton")
         self.continue_btn.pack(side="right", padx=(10, 0), ipadx=20, ipady=10)
     
     def _create_break_selection(self, parent):
@@ -297,6 +335,68 @@ class MainWindow:
                                  command=self._show_settings,
                                  style="Themed.TButton")
         settings_btn.pack(side="right")
+
+    def _on_canvas_frame_configure(self, event):
+        """Update the scrollregion to encompass the entire frame."""
+        try:
+            self.scroll_canvas.configure(scrollregion=self.scroll_canvas.bbox("all"))
+            self._update_scrollbar_visibility()
+        except tk.TclError:
+            pass
+
+    def _on_canvas_configure(self, event):
+        """Keep the embedded frame width in sync with the canvas width."""
+        try:
+            self.scroll_canvas.itemconfig(self._canvas_window_id, width=event.width)
+
+            self.main_frame.update_idletasks()
+            required_height = self.main_frame.winfo_reqheight()
+            canvas_height = max(event.height, required_height)
+            self.scroll_canvas.itemconfig(self._canvas_window_id, height=canvas_height)
+            self._update_scrollbar_visibility()
+        except tk.TclError:
+            pass
+
+    def _on_mousewheel(self, event):
+        """Allow mouse wheel scrolling inside the canvas."""
+        if not hasattr(self, 'scroll_canvas') or not getattr(self, '_scrollbar_visible', False):
+            return
+        try:
+            delta = event.delta
+            if delta == 0 and hasattr(event, 'num') and event.num in (4, 5):
+                delta = 120 if event.num == 4 else -120
+            self.scroll_canvas.yview_scroll(int(-delta / 120), "units")
+        except tk.TclError:
+            pass
+
+    def _bind_mousewheel(self, widget):
+        """Bind mouse wheel scrolling to the provided widget."""
+        widget.bind("<MouseWheel>", self._on_mousewheel)
+        widget.bind("<Button-4>", self._on_mousewheel)
+        widget.bind("<Button-5>", self._on_mousewheel)
+
+    def _update_scrollbar_visibility(self):
+        """Show or hide the vertical scrollbar based on content height."""
+        if not hasattr(self, 'vertical_scrollbar'):
+            return
+
+        try:
+            required_height = self.main_frame.winfo_reqheight()
+            canvas_height = self.scroll_canvas.winfo_height()
+        except tk.TclError:
+            return
+
+        should_show = required_height > canvas_height + 1
+
+        if should_show and not self._scrollbar_visible:
+            self.vertical_scrollbar.pack(side="right", fill="y")
+            self.scroll_canvas.configure(yscrollcommand=self.vertical_scrollbar.set)
+            self._scrollbar_visible = True
+        elif not should_show and self._scrollbar_visible:
+            self.vertical_scrollbar.pack_forget()
+            self.scroll_canvas.configure(yscrollcommand=None)
+            self.scroll_canvas.yview_moveto(0)
+            self._scrollbar_visible = False
     
     def _start_day(self):
         """Handle Start Day button click."""

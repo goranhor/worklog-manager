@@ -1,5 +1,5 @@
 # Worklog Manager - Python Dependencies
-# Version 1.5.0 - Advanced Features
+# Version 1.6.0 - Advanced Features
 
 # Core Dependencies (included with Python standard library):
 # - tkinter (GUI framework)

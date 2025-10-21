@@ -207,6 +207,42 @@ class ThemeManager:
             foreground=[('disabled', colors['fg_secondary'])]
         )
 
+        def configure_action_button(style_name: str, base_color: str, text_color: str = None):
+            """Configure a custom action button style with consistent states."""
+            if not text_color:
+                text_color = self.get_contrast_text_color(base_color, colors)
+
+            active_color = self.lighten_color(base_color, 1.08)
+            pressed_color = self.darken_color(base_color, 0.9)
+
+            self.style.configure(
+                style_name,
+                background=base_color,
+                foreground=text_color,
+                bordercolor=colors['border'],
+                borderwidth=0,
+                padding=(10, 6),
+                relief='flat'
+            )
+
+            self.style.map(
+                style_name,
+                background=[
+                    ('pressed', pressed_color),
+                    ('active', active_color),
+                    ('disabled', disabled_bg)
+                ],
+                foreground=[('disabled', colors['fg_secondary'])]
+            )
+
+        # Custom control button palettes
+        configure_action_button('StartDay.TButton', colors['success'])
+        configure_action_button('EndDay.TButton', colors['danger'])
+        stop_base = self.lighten_color(colors['warning'], 1.15)
+        configure_action_button('Stop.TButton', stop_base)
+        continue_base = self.lighten_color(colors['success'], 1.35)
+        configure_action_button('Continue.TButton', continue_base)
+
         self.style.configure(
             'Themed.TFrame',
             background=colors['bg_primary'],
@@ -645,6 +681,23 @@ class ThemeManager:
             return f"#{r:02x}{g:02x}{b:02x}"
         except:
             return color
+
+    def get_contrast_text_color(self, background_color: str, colors: Dict[str, str]) -> str:
+        """Choose a contrasting text color based on background brightness."""
+        hex_color = background_color.lstrip('#')
+
+        try:
+            r = int(hex_color[0:2], 16)
+            g = int(hex_color[2:4], 16)
+            b = int(hex_color[4:6], 16)
+
+            luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+
+            if luminance < 0.55:
+                return colors.get('selected_text', '#ffffff')
+            return colors.get('fg_primary', '#000000')
+        except Exception:
+            return colors.get('fg_primary', '#000000')
     
     def create_custom_theme(self, name: str, base_theme: str = 'light', 
                           color_overrides: Dict[str, str] = None):
