@@ -7,7 +7,7 @@
 Worklog Manager is a comprehensive desktop application for precise work time tracking. Built with Python and Tkinter, it provides professionals and teams with an offline-first solution for monitoring work hours, managing breaks, and generating detailed productivity reports.
 
 ### Key Statistics
-- **Version**: 1.4.0 (Production Ready)
+- **Version**: 1.5.0 (Production Ready)
 - **Language**: Python 3.7+
 - **License**: MIT
 - **Platform**: Cross-platform (Windows, macOS, Linux)
@@ -114,7 +114,7 @@ worklog-manager/
 ✅ **Phase 1**: Core time tracking (v1.0.0)
 ✅ **Phase 2**: Action history and revoke (v1.2.0)
 ✅ **Phase 3**: Export and reporting (v1.3.0)
-✅ **Phase 4**: Advanced features (v1.4.0)
+✅ **Phase 4**: Advanced features (v1.5.0)
 
 ### Current State
 - **Production ready** for professional use

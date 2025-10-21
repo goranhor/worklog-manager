@@ -102,6 +102,7 @@ class AppearanceSettings:
     # Window settings
     window_width: int = 600
     window_height: int = 500
+    window_maximized: bool = False
     remember_window_position: bool = True
     window_x: int = 100
     window_y: int = 100

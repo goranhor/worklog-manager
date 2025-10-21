@@ -34,7 +34,7 @@ except ImportError:
 class SystemTrayManager:
     """Manages system tray integration for the worklog application."""
     
-    def __init__(self, root: tk.Tk, app_name: str = "Worklog Manager"):
+    def __init__(self, root: tk.Tk, app_name: str = "Worklog Manager", setup_protocol: bool = False):
         self.root = root
         self.app_name = app_name
         self.tray_icon = None
@@ -52,9 +52,10 @@ class SystemTrayManager:
         # Create default icon
         self.icon_image = self.create_default_icon()
         
-        # Setup protocol for window close
+        # Setup protocol for window close (optional, controlled by setup_protocol parameter)
         self.original_protocol = None
-        self.setup_window_protocol()
+        if setup_protocol:
+            self.setup_window_protocol()
     
     def create_default_icon(self):
         """Create a default icon for the system tray."""
@@ -158,6 +159,59 @@ class SystemTrayManager:
             # Normal exit
             self.quit_application()
     
+    def on_left_click(self, icon, item):
+        """Handle left-click on tray icon - show/hide window."""
+        print(f"Left-click detected on tray icon")
+        try:
+            # Use after() to run in main thread
+            print(f"Scheduling toggle_window_visibility in main thread")
+            self.root.after(0, self._toggle_window_visibility)
+        except Exception as e:
+            print(f"Error handling left click: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    def _toggle_window_visibility(self):
+        """Toggle window visibility (called in main thread)."""
+        try:
+            print(f"_toggle_window_visibility called")
+            if "toggle_window" in self.callbacks:
+                print("Using toggle_window callback")
+                try:
+                    self.callbacks["toggle_window"]()
+                    return
+                except Exception as callback_error:
+                    print(f"toggle_window callback failed: {callback_error}")
+                    import traceback
+                    traceback.print_exc()
+            # Check if window is withdrawn (hidden)
+            current_state = self.root.state()
+            print(f"Current window state: {current_state}")
+            
+            if current_state == 'withdrawn':
+                # Window is hidden, show it
+                print("Window is hidden, showing it...")
+                self._show_window_main_thread()
+            else:
+                # Window is visible, hide it
+                print("Window is visible, hiding it...")
+                self._hide_window_main_thread()
+        except Exception as e:
+            print(f"Error toggling window: {e}")
+            import traceback
+            traceback.print_exc()
+            # If error, try to show window
+            self._show_window_main_thread()
+
+    def toggle_window_action(self, icon=None, item=None):
+        """Toggle window visibility from tray menu/default action."""
+        try:
+            self.root.after(0, self._toggle_window_visibility)
+        except Exception as e:
+            print(f"Error toggling window from tray action: {e}")
+            import traceback
+            traceback.print_exc()
+    
     def register_callback(self, action: str, callback: Callable):
         """Register a callback for tray menu actions."""
         self.callbacks[action] = callback
@@ -175,24 +229,37 @@ class SystemTrayManager:
             # Create tray menu
             menu = self.create_tray_menu()
             
-            # Create tray icon
+            # Create tray icon with left-click handler
             icon_image = self.icon_image or self.create_status_icon("idle")
+            
+            # Create the icon without default action first
             self.tray_icon = pystray.Icon(
                 self.app_name,
                 icon_image,
-                menu=menu,
                 title=self.app_name
             )
+            
+            # Set menu
+            self.tray_icon.menu = menu
+            
+            # Set default action (triggered by double-click on most platforms)
+            self.tray_icon.default_action = lambda icon, item=None: self.toggle_window_action(icon, item)
+            
+            print(f"System tray icon created with default_action set to show_window")
             
             # Start tray in separate thread
             self.running = True
             self.tray_thread = threading.Thread(target=self._run_tray, daemon=True)
             self.tray_thread.start()
             
+            print(f"System tray thread started")
+            
             return True
             
         except Exception as e:
             print(f"Error starting system tray: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def _run_tray(self):
@@ -217,6 +284,13 @@ class SystemTrayManager:
         
         if self.tray_thread:
             self.tray_thread.join(timeout=2)
+
+    def cleanup(self):
+        """Cleanup helper for main application shutdown."""
+        try:
+            self.stop_tray()
+        except Exception as exc:
+            print(f"System tray cleanup failed: {exc}")
     
     def create_tray_menu(self):
         """Create the system tray menu."""
@@ -224,6 +298,7 @@ class SystemTrayManager:
             return None
         
         return pystray.Menu(
+            Item("Toggle Window", self.toggle_window_action, default=True),
             Item("Show Window", self.show_window),
             Item("Hide Window", self.hide_window),
             pystray.Menu.SEPARATOR,
@@ -308,9 +383,23 @@ class SystemTrayManager:
     
     def _show_window_main_thread(self):
         """Show window in main thread."""
+        if "show_window" in self.callbacks:
+            print("Delegating show to registered callback")
+            try:
+                self.callbacks["show_window"]()
+                return
+            except Exception as callback_error:
+                print(f"show_window callback failed: {callback_error}")
+                import traceback
+                traceback.print_exc()
+        print("_show_window_main_thread called")
+        print(f"Window state before deiconify: {self.root.state()}")
         self.root.deiconify()
+        print(f"Window state after deiconify: {self.root.state()}")
         self.root.lift()
+        print("Window lifted")
         self.root.focus_force()
+        print("Window focused")
     
     def hide_window(self, item=None):
         """Hide the main application window."""
@@ -321,6 +410,15 @@ class SystemTrayManager:
     
     def _hide_window_main_thread(self):
         """Hide window in main thread."""
+        if "hide_window" in self.callbacks:
+            print("Delegating hide to registered callback")
+            try:
+                self.callbacks["hide_window"]()
+                return
+            except Exception as callback_error:
+                print(f"hide_window callback failed: {callback_error}")
+                import traceback
+                traceback.print_exc()
         self.root.withdraw()
     
     def start_work_action(self, item=None):

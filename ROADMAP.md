@@ -2,19 +2,16 @@
 
 Future development plans and feature ideas for Worklog Manager.
 
-## Version 1.4.0 - CURRENT ✅
+## Version 1.5.0 - CURRENT ✅
 
-All planned features completed:
-- ✅ Core time tracking
-- ✅ Break management
-- ✅ Action history and revoke system
-- ✅ Export and reporting (CSV, JSON, PDF)
-- ✅ Settings management
-- ✅ Themes and notifications
-- ✅ System tray integration
-- ✅ Keyboard shortcuts
+Latest highlights:
+- ✅ Appearance settings for window size and maximized state
+- ✅ General behavior options (start minimized, confirm exit, minimize to tray)
+- ✅ System tray improvements with reliable window toggling and cleanup
+- ✅ Geometry preservation when hiding to system tray
+- ✅ Stability fixes for shutdown and tray lifecycle
 
-## Version 1.5.0 - Data Management (Planned)
+## Version 1.6.0 - Data Management (Planned)
 
 **Focus**: Enhanced data capabilities and historical analysis
 
@@ -35,7 +32,7 @@ All planned features completed:
 
 **Target Release**: Q1 2026
 
-## Version 1.6.0 - Collaboration Features (Under Consideration)
+## Version 1.7.0 - Collaboration Features (Under Consideration)
 
 **Focus**: Team and multi-user capabilities
 
@@ -49,7 +46,7 @@ All planned features completed:
 
 **Target Release**: Q2 2026
 
-## Version 1.7.0 - Integration & Automation (Future)
+## Version 1.8.0 - Integration & Automation (Future)
 
 **Focus**: External integrations and automation
 
@@ -83,8 +80,8 @@ All planned features completed:
 
 Features requested by users (in order of popularity):
 
-1. **Edit Historical Data** - High demand, planned for v1.5.0
-2. **Project Tracking** - Under consideration for v1.6.0
+1. **Edit Historical Data** - High demand, planned for v1.6.0
+2. **Project Tracking** - Under consideration for v1.7.0
 3. **Calendar Integration** - Investigating feasibility
 4. **Mobile App** - Long-term goal (v2.0.0)
 5. **Multi-language Support** - Medium priority
@@ -143,7 +140,7 @@ As we grow, we maintain these principles:
 
 ## Release Schedule
 
-- **Patch releases** (1.4.x): As needed for bug fixes
+- **Patch releases** (1.5.x): As needed for bug fixes
 - **Minor releases** (1.x.0): Quarterly (approximately)
 - **Major releases** (x.0.0): Annually or as warranted
 

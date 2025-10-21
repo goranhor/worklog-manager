@@ -37,8 +37,14 @@ class MainWindow:
 
         # Create main window
         self.root = tk.Tk()
-        self.root.title("Worklog Manager v1.4")
-        self.root.geometry("600x500")
+        self.root.title("Worklog Manager v1.5.0")
+        
+        # Load window settings from configuration
+        appearance_settings = self.settings_manager.settings.appearance
+        window_width = appearance_settings.window_width
+        window_height = appearance_settings.window_height
+        
+        self.root.geometry(f"{window_width}x{window_height}")
         self.root.resizable(True, True)
         
         # Initialize theme manager after root window is created
@@ -61,9 +67,36 @@ class MainWindow:
         # Set minimum size
         self.root.minsize(550, 450)
         
-        # Center the window
-        self._center_window()
+        # Apply window position if remember_window_position is enabled
+        if appearance_settings.remember_window_position:
+            window_x = appearance_settings.window_x
+            window_y = appearance_settings.window_y
+            self.root.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
+        else:
+            # Center the window
+            self._center_window()
         
+        # Track last known normal geometry for tray restore
+        self._saved_geometry = self.root.geometry()
+
+        # Apply maximized state if enabled
+        self.logger.info(f"Window maximized setting: {appearance_settings.window_maximized}")
+        if appearance_settings.window_maximized:
+            self.logger.info("Applying maximized state")
+            self.root.state('zoomed')
+        else:
+            self.logger.info("Window should not be maximized")
+        
+        # Apply start minimized from general settings
+        general_settings = self.settings_manager.settings.general
+        if general_settings.start_minimized:
+            self.logger.info("Starting minimized")
+            self.root.iconify()
+        
+        # Track maximize state for system tray restore
+        self._was_maximized = self.root.state() == 'zoomed'
+        self.root.bind("<Configure>", self._on_window_configure)
+
         # Variables for break type selection
         self.break_type_var = tk.StringVar(value=BreakType.GENERAL.value)
         
@@ -106,7 +139,6 @@ class MainWindow:
         # Break type selection
         self._create_break_selection(self.main_frame)
         
-        # Timer display
         # Timer display component
         self.timer_display = TimerDisplay(self.main_frame, self.settings_manager)
         self.timer_display.pack(fill="x", pady=10)
@@ -705,6 +737,60 @@ class MainWindow:
     def _on_closing(self):
         """Handle window closing event."""
         try:
+            # Check if we should minimize to tray instead of closing
+            general_settings = self.settings_manager.settings.general
+            
+            # If system tray is enabled and minimize_to_tray is enabled, just hide the window
+            if general_settings.system_tray_enabled and general_settings.minimize_to_tray:
+                self.root.withdraw()  # Hide the window instead of closing
+                return
+            
+            # Otherwise, proceed with normal exit confirmation and cleanup
+            if general_settings.confirm_exit:
+                if not messagebox.askyesno("Confirm Exit", "Are you sure you want to exit the application?"):
+                    return  # User cancelled, don't close
+            
+            # Perform actual exit
+            self._perform_exit()
+            
+        except Exception as e:
+            self.logger.error(f"Error during closing: {e}")
+    
+    def _perform_exit(self):
+        """Perform the actual exit operations (save settings and close)."""
+        try:
+            # Save window geometry if remember settings are enabled
+            appearance_settings = self.settings_manager.settings.appearance
+            
+            # Check if window is maximized
+            is_maximized = self.root.state() == 'zoomed'
+            
+            # Only save position and size if window is NOT maximized
+            # Do NOT save the maximized state - that should only be set via Settings dialog
+            if appearance_settings.remember_window_position and not is_maximized:
+                # Get current window geometry
+                geometry = self.root.geometry()
+                # Parse geometry string: "widthxheight+x+y"
+                size_pos = geometry.split('+')
+                if len(size_pos) >= 3:
+                    width_height = size_pos[0].split('x')
+                    appearance_settings.window_width = int(width_height[0])
+                    appearance_settings.window_height = int(width_height[1])
+                    appearance_settings.window_x = int(size_pos[1])
+                    appearance_settings.window_y = int(size_pos[2])
+                    # Save settings
+                    self.settings_manager.save_settings()
+            elif not is_maximized:
+                # Just save size if only size should be remembered
+                geometry = self.root.geometry()
+                size_pos = geometry.split('+')
+                if len(size_pos) >= 1:
+                    width_height = size_pos[0].split('x')
+                    appearance_settings.window_width = int(width_height[0])
+                    appearance_settings.window_height = int(width_height[1])
+                    # Save settings
+                    self.settings_manager.save_settings()
+            
             # Stop timer
             self.worklog_manager.stop_timer()
             
@@ -714,6 +800,73 @@ class MainWindow:
             
         except Exception as e:
             self.logger.error(f"Error during closing: {e}")
+    
+    def show_window(self):
+        """Show the main window (used by system tray)."""
+        self.root.deiconify()
+        if self._was_maximized:
+            self.root.state('zoomed')
+        else:
+            self.root.state('normal')
+            if self._saved_geometry:
+                try:
+                    self.root.geometry(self._saved_geometry)
+                except tk.TclError as exc:
+                    self.logger.debug(f"Failed to restore geometry {self._saved_geometry}: {exc}")
+        self.root.lift()
+        self.root.focus_force()
+    
+    def hide_window(self):
+        """Hide the main window to system tray."""
+        current_state = self.root.state()
+        if current_state == 'zoomed':
+            self._was_maximized = True
+        else:
+            self._was_maximized = False
+            try:
+                self._saved_geometry = self.root.geometry()
+            except tk.TclError:
+                pass
+        self.root.withdraw()
+
+    def toggle_window_visibility(self):
+        """Toggle visibility while preserving geometry and maximize state."""
+        current_state = self.root.state()
+        if current_state in ('withdrawn', 'iconic'):
+            self.logger.debug("Restoring window from system tray toggle")
+            self.show_window()
+        else:
+            self.logger.debug("Hiding window via system tray toggle")
+            self.hide_window()
+
+    def _on_window_configure(self, event):
+        """Track window maximize/normalize state changes."""
+        try:
+            current_state = self.root.state()
+            if current_state in ('zoomed', 'normal'):
+                self._was_maximized = current_state == 'zoomed'
+                if current_state == 'normal' and self.root.winfo_viewable():
+                    self._saved_geometry = self.root.geometry()
+        except tk.TclError as exc:
+            self.logger.debug(f"Configure state tracking failed: {exc}")
+    
+    def quit_application(self):
+        """Quit the application completely (called by system tray)."""
+        general_settings = self.settings_manager.settings.general
+        if general_settings.confirm_exit:
+            if not messagebox.askyesno("Confirm Exit", "Are you sure you want to exit the application?"):
+                return False  # User cancelled
+        
+        self._perform_exit()
+        return True
+
+    def open_settings_from_tray(self):
+        """Restore the window and open settings when invoked from system tray."""
+        try:
+            self.show_window()
+            self._show_settings()
+        except Exception as exc:
+            self.logger.error(f"Failed to open settings from tray: {exc}")
     
     def run(self):
         """Start the application main loop."""

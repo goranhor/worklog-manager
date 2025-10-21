@@ -26,7 +26,7 @@ Advanced Features (Phase 4):
 - Cross-platform compatibility
 
 Author: GitHub Copilot
-Version: 2.0.0
+Version: 1.5.0
 """
 
 import sys
@@ -144,11 +144,34 @@ class WorklogApplication:
             # Setup system tray (after main window exists)
             settings = self.settings_manager.settings
             try:
-                if hasattr(settings, 'ui') and settings.ui.enable_system_tray:
-                    self.system_tray_manager = SystemTrayManager(self.main_window)
-            except AttributeError:
+                if settings.general.system_tray_enabled:
+                    self.logger.info("Attempting to initialize system tray...")
+                    self.system_tray_manager = SystemTrayManager(self.main_window.root, "Worklog Manager")
+                    
+                    # Register callbacks for tray menu actions
+                    self.system_tray_manager.register_callback("quit_app", self.main_window.quit_application)
+                    self.system_tray_manager.register_callback("show_settings", self.main_window.open_settings_from_tray)
+                    self.system_tray_manager.register_callback("show_window", self.main_window.show_window)
+                    self.system_tray_manager.register_callback("hide_window", self.main_window.hide_window)
+                    self.system_tray_manager.register_callback("toggle_window", self.main_window.toggle_window_visibility)
+                    
+                    self.logger.info("Starting system tray...")
+                    if self.system_tray_manager.start_tray():
+                        self.logger.info("System tray initialized and started successfully")
+                    else:
+                        self.logger.warning("System tray could not be started")
+                        self.system_tray_manager = None
+                else:
+                    self.logger.info("System tray is disabled in settings")
+            except AttributeError as e:
                 # Skip system tray if settings don't support it
-                pass
+                self.logger.warning(f"System tray not available: {e}")
+                import traceback
+                self.logger.warning(traceback.format_exc())
+            except Exception as e:
+                self.logger.warning(f"Could not initialize system tray: {e}")
+                import traceback
+                self.logger.warning(traceback.format_exc())
             
             # Setup keyboard shortcuts
             try:
@@ -181,7 +204,7 @@ class WorklogApplication:
             main_window = self.create_main_window()
             
             # Start the application
-            self.logger.info("Starting Worklog Manager Application v2.0.0")
+            self.logger.info("Starting Worklog Manager Application v1.5.0")
             main_window.run()
             
         except Exception as e:
@@ -243,7 +266,7 @@ def setup_logging():
     logger = logging.getLogger(__name__)
     logger.info("="*50)
     logger.info("Worklog Manager Application Starting")
-    logger.info(f"Version: 2.0.0")
+    logger.info(f"Version: 1.5.0")
     logger.info(f"Python: {sys.version}")
     logger.info(f"Working Directory: {os.getcwd()}")
     logger.info(f"Project Root: {project_root}")
@@ -258,7 +281,7 @@ def main():
         setup_logging()
         logger = logging.getLogger(__name__)
         
-        logger.info("Initializing Worklog Manager v2.0.0 with advanced features...")
+        logger.info("Initializing Worklog Manager v1.5.0 with advanced features...")
         
         # Create and run the comprehensive application
         app = WorklogApplication()

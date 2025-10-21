@@ -2,7 +2,7 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](CHANGELOG.md)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](INSTALL.md)
 [![Code Style](https://img.shields.io/badge/code%20style-PEP8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 
@@ -144,7 +144,7 @@ Daily logs stored in `logs/` directory with format `worklog_YYYYMMDD.log`. Inclu
 
 ## Development Status
 
-**Current Version: 1.4.0** - All phases completed
+**Current Version: 1.5.0** - All phases completed
 - ✅ Phase 1: Core time tracking and break management
 - ✅ Phase 2: Action history and revoke system
 - ✅ Phase 3: Export and reporting (CSV/JSON/PDF)

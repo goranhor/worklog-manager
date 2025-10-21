@@ -294,19 +294,38 @@ class SettingsDialog:
         self.tabs['appearance']['font_size'] = font_size_var
         
         # Window settings
-        window_group = ttk.LabelFrame(frame, text="Window Settings", padding=10)
+        window_group = ttk.LabelFrame(scrollable_frame, text="Window Settings", padding=10)
         window_group.pack(fill='x', padx=10, pady=5)
+        
+        # Window dimensions
+        ttk.Label(window_group, text="Window width:").grid(row=0, column=0, sticky='w', pady=2)
+        window_width_var = tk.IntVar(value=self.settings.appearance.window_width)
+        ttk.Spinbox(window_group, from_=400, to=2000, increment=50, 
+                   textvariable=window_width_var, width=10).grid(row=0, column=1, sticky='w', padx=(10, 0), pady=2)
+        self.tabs['appearance']['window_width'] = window_width_var
+        
+        ttk.Label(window_group, text="Window height:").grid(row=1, column=0, sticky='w', pady=2)
+        window_height_var = tk.IntVar(value=self.settings.appearance.window_height)
+        ttk.Spinbox(window_group, from_=300, to=1500, increment=50, 
+                   textvariable=window_height_var, width=10).grid(row=1, column=1, sticky='w', padx=(10, 0), pady=2)
+        self.tabs['appearance']['window_height'] = window_height_var
+        
+        # Start maximized
+        window_maximized_var = tk.BooleanVar(value=self.settings.appearance.window_maximized)
+        ttk.Checkbutton(window_group, text="Start window maximized", 
+                       variable=window_maximized_var).grid(row=2, column=0, columnspan=2, sticky='w', pady=2)
+        self.tabs['appearance']['window_maximized'] = window_maximized_var
         
         # Remember window position
         remember_pos_var = tk.BooleanVar(value=self.settings.appearance.remember_window_position)
         ttk.Checkbutton(window_group, text="Remember window position", 
-                       variable=remember_pos_var).grid(row=0, column=0, sticky='w', pady=2)
+                       variable=remember_pos_var).grid(row=3, column=0, columnspan=2, sticky='w', pady=2)
         self.tabs['appearance']['remember_position'] = remember_pos_var
         
         # Remember window size
         remember_size_var = tk.BooleanVar(value=self.settings.appearance.remember_window_position)
         ttk.Checkbutton(window_group, text="Remember window size", 
-                       variable=remember_size_var).grid(row=1, column=0, sticky='w', pady=2)
+                       variable=remember_size_var).grid(row=4, column=0, columnspan=2, sticky='w', pady=2)
         self.tabs['appearance']['remember_size'] = remember_size_var
     
     def create_notifications_tab(self):
@@ -723,6 +742,9 @@ class SettingsDialog:
             # Save settings (no parameter needed)
             self.settings_manager.save_settings()
             
+            # Refresh our reference to settings after save
+            self.settings = self.settings_manager.settings
+            
             # Notify parent of changes
             if self.on_settings_changed:
                 self.on_settings_changed(self.settings)
@@ -741,6 +763,9 @@ class SettingsDialog:
             
             # Save settings (no parameter needed)
             self.settings_manager.save_settings()
+            
+            # Refresh our reference to settings after save
+            self.settings = self.settings_manager.settings
             
             # Notify parent of changes
             if self.on_settings_changed:
@@ -844,6 +869,13 @@ class SettingsDialog:
                 if theme_enum.value == theme_value:
                     self.settings.appearance.theme = theme_enum
                     break
+            # Window settings
+            if 'window_width' in ap:
+                self.settings.appearance.window_width = ap['window_width'].get()
+            if 'window_height' in ap:
+                self.settings.appearance.window_height = ap['window_height'].get()
+            if 'window_maximized' in ap:
+                self.settings.appearance.window_maximized = ap['window_maximized'].get()
             # Note: font_family and font_size are not stored in settings yet
             self.settings.appearance.remember_window_position = ap['remember_position'].get()
             self.settings.appearance.remember_window_position = ap['remember_size'].get()
@@ -918,6 +950,13 @@ class SettingsDialog:
             if hasattr(theme_value, 'value'):
                 theme_value = theme_value.value
             ap['theme'].set(theme_value)
+            # Window settings
+            if 'window_width' in ap:
+                ap['window_width'].set(settings.appearance.window_width)
+            if 'window_height' in ap:
+                ap['window_height'].set(settings.appearance.window_height)
+            if 'window_maximized' in ap:
+                ap['window_maximized'].set(settings.appearance.window_maximized)
             # Note: font settings use defaults as they're not stored yet
             ap['font_family'].set("Arial")
             ap['font_size'].set(10)

@@ -5,6 +5,20 @@ All notable changes to Worklog Manager will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-10-21
+
+### Added
+- Appearance settings now include window dimensions and maximized state options
+- General behavior toggles (start minimized, confirm exit, minimize to tray) are applied throughout the app
+
+### Changed
+- System tray actions delegate to the main window to preserve geometry and maximize state when toggling visibility
+- Window restoration logic now consistently lifts, focuses, and reapplies saved size when returning from the tray
+
+### Fixed
+- Eliminated shutdown errors by adding a cleanup helper for the system tray manager
+- Prevented geometry loss when hiding and restoring the window via the system tray
+
 ## [1.4.0] - 2025-10-21
 
 ### Added
@@ -97,6 +111,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## Release Notes
+
+### Version 1.5.0 - Window & Tray Enhancements
+Refined the desktop experience with configurable window sizing, more reliable tray behavior, and cleaner shutdowns. Settings from the general tab now take effect throughout the app, delivering a smoother daily workflow.
 
 ### Version 1.4.0 - Advanced Features Complete
 This release completes Phase 4 of development, adding comprehensive settings management, themes, notifications, and system tray integration. The application now includes all planned features and is production-ready for professional use.
