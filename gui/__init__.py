@@ -1,0 +1,1 @@
+"""GUI components for the Worklog Manager application."""
