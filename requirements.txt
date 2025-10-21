@@ -22,6 +22,9 @@ plyer>=2.0
 # PDF export functionality (Phase 3 & 4)
 reportlab>=3.6.0
 
+# Python 3.6 compatibility
+dataclasses; python_version < "3.7"
+
 # Optional Dependencies for Enhanced Experience:
 
 # Windows-specific system integration (Windows only)

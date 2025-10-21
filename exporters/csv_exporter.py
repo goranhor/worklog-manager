@@ -9,6 +9,7 @@ from io import StringIO
 
 from core.export_models import ExportData, ExportResult, ReportType
 from core.data_aggregator import DataAggregator
+from utils.datetime_compat import datetime_fromisoformat
 
 
 class CSVExporter:
@@ -224,7 +225,7 @@ class CSVExporter:
                         session_date = session.date
                         break
                 
-                timestamp = datetime.fromisoformat(action.timestamp)
+                timestamp = datetime_fromisoformat(action.timestamp)
                 row = [
                     session_date,
                     timestamp.strftime('%H:%M:%S'),
@@ -289,7 +290,7 @@ class CSVExporter:
                 
                 start_time = ''
                 if break_period.start_time:
-                    start_time = datetime.fromisoformat(break_period.start_time).strftime('%H:%M:%S')
+                    start_time = datetime_fromisoformat(break_period.start_time).strftime('%H:%M:%S')
                 
                 row = [
                     session_date,

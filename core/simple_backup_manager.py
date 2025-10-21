@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional
 from pathlib import Path
 
+from utils.datetime_compat import datetime_fromisoformat
+
 class BackupManager:
     """Simple backup manager using only built-in Python libraries."""
     
@@ -233,7 +235,7 @@ class BackupManager:
                         info_created = info_data.get('created')
                         if info_created:
                             try:
-                                entry['created'] = datetime.fromisoformat(info_created)
+                                entry['created'] = datetime_fromisoformat(info_created)
                             except ValueError:
                                 pass
                     except Exception as info_error:

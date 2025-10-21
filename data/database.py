@@ -8,6 +8,7 @@ from typing import Optional, List, Dict, Any
 from contextlib import contextmanager
 
 from data.models import WorkSession, ActionLog, BreakPeriod, WorklogState, ActionType, BreakType
+from utils.datetime_compat import datetime_fromisoformat
 
 
 class Database:
@@ -151,8 +152,8 @@ class Database:
                     productive_minutes=row['productive_minutes'],
                     overtime_minutes=row['overtime_minutes'],
                     status=WorklogState(row['status']),
-                    created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None,
-                    updated_at=datetime.fromisoformat(row['updated_at']) if row['updated_at'] else None
+                    created_at=datetime_fromisoformat(row['created_at']) if row['created_at'] else None,
+                    updated_at=datetime_fromisoformat(row['updated_at']) if row['updated_at'] else None
                 )
             return None
     
@@ -236,7 +237,7 @@ class Database:
                     break_type=BreakType(row['break_type']) if row['break_type'] else None,
                     notes=row['notes'],
                     revoked=bool(row['revoked']),
-                    created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None
+                    created_at=datetime_fromisoformat(row['created_at']) if row['created_at'] else None
                 ))
             return actions
     
@@ -346,7 +347,7 @@ class Database:
                     start_time=row['start_time'],
                     end_time=row['end_time'],
                     duration_minutes=row['duration_minutes'],
-                    created_at=datetime.fromisoformat(row['created_at']) if row['created_at'] else None
+                    created_at=datetime_fromisoformat(row['created_at']) if row['created_at'] else None
                 ))
             return breaks
     

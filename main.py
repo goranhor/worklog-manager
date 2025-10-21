@@ -35,11 +35,13 @@ import logging
 import threading
 import atexit
 from datetime import datetime
-from pathlib import Path
 
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, project_root)
+
+# Import datetime compatibility for Python 3.6 support (must be imported early)
+from utils.datetime_compat import datetime_fromisoformat, fromisoformat_compat  # noqa: F401
 
 # Import core application components
 from gui.main_window import MainWindow
