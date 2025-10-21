@@ -37,7 +37,7 @@ class MainWindow:
 
         # Create main window
         self.root = tk.Tk()
-        self.root.title("Worklog Manager v1.0")
+        self.root.title("Worklog Manager v1.4")
         self.root.geometry("600x500")
         self.root.resizable(True, True)
         

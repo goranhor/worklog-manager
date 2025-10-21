@@ -8,18 +8,35 @@
 
 A professional Python desktop application for precise work time tracking with automatic overtime calculation, break management, and comprehensive reporting capabilities. Built to ensure compliance with customizable work norms while providing detailed analytics and audit trails.
 
+## Screenshot
+
+![Worklog Manager Interface](images/worklog-manager-interface.png)
+
+*Professional time tracking interface with real-time session monitoring, break management, and productivity analytics*
+
 ---
 
 ## Table of Contents
 
-- [Key Features](#key-features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technical Architecture](#technical-architecture)
-- [Configuration](#configuration)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [License](#license)
+- [Worklog Manager](#worklog-manager)
+  - [Screenshot](#screenshot)
+  - [Table of Contents](#table-of-contents)
+  - [Key Features](#key-features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Daily Workflow](#daily-workflow)
+    - [Key Functions](#key-functions)
+    - [Display Reference](#display-reference)
+  - [Technical Architecture](#technical-architecture)
+  - [Configuration](#configuration)
+  - [Logging \& Monitoring](#logging--monitoring)
+  - [Troubleshooting](#troubleshooting)
+  - [Development Status](#development-status)
+  - [Documentation](#documentation)
+  - [Contributing](#contributing)
+  - [Support](#support)
+  - [License](#license)
+  - [Acknowledgments](#acknowledgments)
 
 ## Key Features
 
