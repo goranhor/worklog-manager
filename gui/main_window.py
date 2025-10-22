@@ -245,13 +245,13 @@ class MainWindow:
         button_frame = ttk.Frame(parent, style="Themed.TFrame")
         button_frame.pack(fill="x", pady=10)
         
-        # First row - Start Day and End Day
+        # First row - Start Work and End Work
         row1_frame = ttk.Frame(button_frame, style="Themed.TFrame")
         row1_frame.pack(fill="x", pady=(0, 10))
 
         self.start_day_btn = ttk.Button(
             row1_frame,
-            text="Start Day",
+            text="Start Work",
             command=self._start_day,
             style="StartDay.TButton",
             width=15
@@ -260,7 +260,7 @@ class MainWindow:
 
         self.end_day_btn = ttk.Button(
             row1_frame,
-            text="End Day",
+            text="End Work",
             command=self._end_day,
             style="EndDay.TButton",
             width=15
