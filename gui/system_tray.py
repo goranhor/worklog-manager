@@ -509,8 +509,8 @@ Features:
 • Keyboard shortcuts
 • Automatic backups
 
-Version: 1.0
-© 2024 Worklog Manager"""
+Version: 1.7.0
+© 2025 Worklog Manager"""
         
         messagebox.showinfo("About Worklog Manager", about_text)
     

@@ -37,7 +37,7 @@ class MainWindow:
 
         # Create main window
         self.root = tk.Tk()
-        self.root.title("Worklog Manager v1.6.0")
+        self.root.title("Worklog Manager v1.7.0")
         
         # Load window settings from configuration
         appearance_settings = self.settings_manager.settings.appearance
@@ -253,7 +253,8 @@ class MainWindow:
             row1_frame,
             text="Start Day",
             command=self._start_day,
-            style="StartDay.TButton"
+            style="StartDay.TButton",
+            width=15
         )
         self.start_day_btn.pack(side="left", padx=(0, 10), ipadx=20, ipady=10)
 
@@ -261,22 +262,31 @@ class MainWindow:
             row1_frame,
             text="End Day",
             command=self._end_day,
-            style="EndDay.TButton"
+            style="EndDay.TButton",
+            width=15
         )
         self.end_day_btn.pack(side="right", padx=(10, 0), ipadx=20, ipady=10)
-        
-        # Second row - Stop and Continue
+
+        # Second row - Take a Break and Resume Work
         row2_frame = ttk.Frame(button_frame, style="Themed.TFrame")
         row2_frame.pack(fill="x")
-        
-        self.stop_btn = ttk.Button(row2_frame, text="Stop",
-                                  command=self._stop_work,
-                                  style="Stop.TButton")
+
+        self.stop_btn = ttk.Button(
+            row2_frame,
+            text="Take a Break",
+            command=self._stop_work,
+            style="Stop.TButton",
+            width=15
+        )
         self.stop_btn.pack(side="left", padx=(0, 10), ipadx=20, ipady=10)
-        
-        self.continue_btn = ttk.Button(row2_frame, text="Continue",
-                                      command=self._continue_work,
-                                      style="Continue.TButton")
+
+        self.continue_btn = ttk.Button(
+            row2_frame,
+            text="Resume Work",
+            command=self._continue_work,
+            style="Continue.TButton",
+            width=15
+        )
         self.continue_btn.pack(side="right", padx=(10, 0), ipadx=20, ipady=10)
     
     def _create_break_selection(self, parent):
@@ -452,38 +462,38 @@ class MainWindow:
             messagebox.showerror("Error", f"Failed to end day: {e}")
     
     def _stop_work(self):
-        """Handle Stop button click."""
+        """Handle Take a Break button click."""
         try:
             if self.worklog_manager.can_perform_action(ActionType.STOP):
                 break_type = BreakType(self.break_type_var.get())
                 
-                if messagebox.askyesno("Confirm", f"Stop work for {break_type.value} break?"):
+                if messagebox.askyesno("Confirm", f"Start a {break_type.value.lower()} break?"):
                     if self.worklog_manager.stop_work(break_type):
                         self._update_display()
-                        self.logger.info(f"Work stopped for {break_type.value} break")
+                        self.logger.info(f"Work paused for {break_type.value} break")
                     else:
-                        messagebox.showerror("Error", "Failed to stop work")
+                        messagebox.showerror("Error", "Failed to start break")
             else:
-                messagebox.showwarning("Warning", "Cannot stop work in current state")
+                messagebox.showwarning("Warning", "Cannot start a break in the current state")
         except Exception as e:
-            self.logger.error(f"Error stopping work: {e}")
-            messagebox.showerror("Error", f"Failed to stop work: {e}")
+            self.logger.error(f"Error starting break: {e}")
+            messagebox.showerror("Error", f"Failed to start break: {e}")
     
     def _continue_work(self):
-        """Handle Continue button click."""
+        """Handle Resume Work button click."""
         try:
             if self.worklog_manager.can_perform_action(ActionType.CONTINUE):
-                if messagebox.askyesno("Confirm", "Continue work?"):
+                if messagebox.askyesno("Confirm", "Resume working?"):
                     if self.worklog_manager.continue_work():
                         self._update_display()
-                        self.logger.info("Work continued")
+                        self.logger.info("Work resumed")
                     else:
-                        messagebox.showerror("Error", "Failed to continue work")
+                        messagebox.showerror("Error", "Failed to resume work")
             else:
-                messagebox.showwarning("Warning", "Cannot continue work in current state")
+                messagebox.showwarning("Warning", "Cannot resume work in the current state")
         except Exception as e:
-            self.logger.error(f"Error continuing work: {e}")
-            messagebox.showerror("Error", f"Failed to continue work: {e}")
+            self.logger.error(f"Error resuming work: {e}")
+            messagebox.showerror("Error", f"Failed to resume work: {e}")
     
     def _export_data(self):
         """Handle Export Data button click."""
