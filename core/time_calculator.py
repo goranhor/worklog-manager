@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Optional
 import logging
 
 from data.models import ActionLog, BreakPeriod, TimeCalculation, ActionType, WorklogState
+from utils.datetime_compat import datetime_fromisoformat
 
 
 class TimeCalculator:
@@ -36,7 +37,7 @@ class TimeCalculator:
         Returns:
             datetime object
         """
-        return datetime.fromisoformat(time_str)
+        return datetime_fromisoformat(time_str)
     
     @staticmethod
     def format_time(dt: datetime) -> str:

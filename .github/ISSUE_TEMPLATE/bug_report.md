@@ -28,7 +28,7 @@ If applicable, add screenshots to help explain your problem.
 ## Environment
 - **OS**: [e.g., Windows 10, macOS 11.0, Ubuntu 20.04]
 - **Python Version**: [e.g., 3.9.5]
-- **Worklog Manager Version**: [e.g., 1.6.0]
+- **Worklog Manager Version**: [e.g., 1.7.0]
 
 ## Log Files
 Please attach relevant log files from the `logs/` directory.
