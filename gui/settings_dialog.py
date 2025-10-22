@@ -15,6 +15,21 @@ from core.settings import SettingsManager, UserSettings
 from gui.theme_manager import ThemeManager, ThemePreview
 from core.simple_backup_manager import BackupManager
 
+# Compatibility wrapper for ttk.Spinbox on Python versions that lack it.
+if not hasattr(ttk, 'Spinbox'):
+    class TtkSpinboxCompat(tk.Spinbox):
+        """Compatibility wrapper for ttk.Spinbox using tk.Spinbox."""
+
+        def __init__(self, parent, **kwargs):
+            tk_kwargs = kwargs.copy()
+            if 'from' in tk_kwargs and 'from_' not in tk_kwargs:
+                tk_kwargs['from_'] = tk_kwargs.pop('from')
+            tk_kwargs.setdefault('width', 10)
+            tk_kwargs.setdefault('justify', 'center')
+            super().__init__(parent, **tk_kwargs)
+
+    ttk.Spinbox = TtkSpinboxCompat
+
 class SettingsDialog:
     """Main settings dialog with tabbed interface for all configuration options."""
     

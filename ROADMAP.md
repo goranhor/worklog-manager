@@ -2,7 +2,7 @@
 
 Future development plans and feature ideas for Worklog Manager.
 
-## Version 1.6.0 - CURRENT ✅
+## Version 1.7.0 - CURRENT ✅
 
 Latest highlights:
 - ✅ Appearance settings for window size and maximized state
@@ -11,7 +11,7 @@ Latest highlights:
 - ✅ Geometry preservation when hiding to system tray
 - ✅ Stability fixes for shutdown and tray lifecycle
 
-## Version 1.6.0 - Data Management (Planned)
+## Version 1.7.0 - Data Management (Planned)
 
 **Focus**: Enhanced data capabilities and historical analysis
 
@@ -32,7 +32,7 @@ Latest highlights:
 
 **Target Release**: Q1 2026
 
-## Version 1.7.0 - Collaboration Features (Under Consideration)
+## Version 1.8.0 - Collaboration Features (Under Consideration)
 
 **Focus**: Team and multi-user capabilities
 
@@ -46,7 +46,7 @@ Latest highlights:
 
 **Target Release**: Q2 2026
 
-## Version 1.8.0 - Integration & Automation (Future)
+## Version 1.9.0 - Integration & Automation (Future)
 
 **Focus**: External integrations and automation
 
@@ -80,8 +80,8 @@ Latest highlights:
 
 Features requested by users (in order of popularity):
 
-1. **Edit Historical Data** - High demand, planned for v1.6.0
-2. **Project Tracking** - Under consideration for v1.7.0
+1. **Edit Historical Data** - High demand, planned for v1.7.0
+2. **Project Tracking** - Under consideration for v1.8.0
 3. **Calendar Integration** - Investigating feasibility
 4. **Mobile App** - Long-term goal (v2.0.0)
 5. **Multi-language Support** - Medium priority

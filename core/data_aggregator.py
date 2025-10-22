@@ -8,6 +8,7 @@ from collections import defaultdict
 from data.database import Database
 from data.models import WorkSession, BreakPeriod, ActionLog, BreakType
 from core.export_models import DailyStats, WeeklyStats, ExportData, ExportOptions, DateRange
+from utils.datetime_compat import datetime_fromisoformat
 
 
 class DataAggregator:
@@ -130,7 +131,7 @@ class DataAggregator:
         # Group sessions by date
         sessions_by_date = defaultdict(list)
         for session in sessions:
-            session_date = datetime.fromisoformat(session.date).date()
+            session_date = datetime_fromisoformat(session.date).date()
             sessions_by_date[session_date].append(session)
         
         # Group breaks by session
@@ -159,8 +160,8 @@ class DataAggregator:
                     lunch_breaks=len([b for b in session_breaks if b.break_type == BreakType.LUNCH]),
                     general_breaks=len([b for b in session_breaks if b.break_type == BreakType.GENERAL]),
                     sessions_count=len(day_sessions),
-                    first_start=datetime.fromisoformat(main_session.start_time) if main_session.start_time else None,
-                    last_end=datetime.fromisoformat(main_session.end_time) if main_session.end_time else None
+                    first_start=datetime_fromisoformat(main_session.start_time) if main_session.start_time else None,
+                    last_end=datetime_fromisoformat(main_session.end_time) if main_session.end_time else None
                 )
             else:
                 # No session for this day - create empty stats
